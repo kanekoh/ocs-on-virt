@@ -1,0 +1,31 @@
+---
+
+- name: Update network
+  ignore_errors: true
+  with_inventory_hostnames: masters
+  loop_control:
+    extended: yes
+  script: |
+    virsh_net.sh -m delete -n '{{ public_network_name }}' -d '{{ hostvars[item].inventory_hostname_short }}' -i '{{ public_cidr }}.{{ masters[ansible_loop.index0].ip }}'
+
+- name: Stop VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: destroy
+  become: true
+  with_inventory_hostnames: masters
+
+- name: Undefine VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: undefine
+  become: true
+  with_inventory_hostnames: masters
+
+- name: Remove qcow2
+  with_inventory_hostnames: masters
+  shell: |
+    rm -f "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}.qcow2"
+  ignore_errors: true

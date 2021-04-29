@@ -1,0 +1,44 @@
+---
+
+- name: Update network
+  ignore_errors: true
+  with_inventory_hostnames: bootstrap
+  script: |
+    virsh_net.sh -m delete -n '{{ public_network_name }}' -d '{{ hostvars[item].inventory_hostname_short }}' -i '{{ public_cidr }}.{{ bootstrap_ip }}'
+
+- name: Stop VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: destroy
+  become: true
+  with_inventory_hostnames: bootstrap
+
+- name: Undefine VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: undefine
+  become: true
+  with_inventory_hostnames: bootstrap
+
+- name: Remove Disk
+  with_inventory_hostnames: bootstrap
+  shell: |
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} {{ hostvars[item].inventory_hostname_short }}.iso
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} user-data
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} meta-data
+  ignore_errors: true
+
+- name: Remove Pool
+  with_inventory_hostnames: bootstrap
+  virt_pool:
+    command: destroy
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+  ignore_errors: true
+
+- name: Remove qcow2
+  with_inventory_hostnames: bootstrap
+  shell: |
+    rm -f "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}.qcow2"
+  ignore_errors: true

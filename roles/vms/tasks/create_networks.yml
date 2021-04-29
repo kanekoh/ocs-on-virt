@@ -5,36 +5,36 @@
     name: "{{ public_network_name }}"
     xml: '{{ lookup("template", "public_network.xml.j2") }}'
 
-- name: Define private network
-  community.libvirt.virt_net:
-    command: define
-    name: "{{ private_network_name }}"
-    xml: '{{ lookup("template", "private_network.xml.j2") }}'
+#- name: Define private network
+#  community.libvirt.virt_net:
+#    command: define
+#    name: "{{ private_network_name }}"
+#    xml: '{{ lookup("template", "private_network.xml.j2") }}'
 
 - name: Set autostart public
   community.libvirt.virt_net:
     autostart: yes
     name: "{{ public_network_name }}"
 
-- name: Set autostart private
-  community.libvirt.virt_net:
-    autostart: yes
-    name: "{{ private_network_name }}"
+#- name: Set autostart private
+#  community.libvirt.virt_net:
+#    autostart: yes
+#    name: "{{ private_network_name }}"
 
 - name: Start public network
   community.libvirt.virt_net:
     command: start
     name: "{{ public_network_name }}"
 
-- name: Start private network
-  community.libvirt.virt_net:
-    command: start
-    name: "{{ private_network_name }}"
+#- name: Start private network
+#  community.libvirt.virt_net:
+#    command: start
+#    name: "{{ private_network_name }}"
 
-- name: Add nameserver 
-  lineinfile:
-    dest: /etc/resolv.conf
-    state: present
-    insertafter: "^search.*"
-    line: "nameserver {{ public_cidr }}.1"
-  become: yes
+#- name: Add nameserver 
+#  lineinfile:
+#    dest: /etc/resolv.conf
+#    state: present
+#    insertafter: "^search.*"
+#    line: "nameserver {{ public_cidr }}.1"
+#  become: yes

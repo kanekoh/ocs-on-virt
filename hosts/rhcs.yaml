@@ -33,7 +33,6 @@ all:
     rhsm_password: 
     rhsm_poolid: 
 
-
     proxy_environment: true
     rhel_version: 8
 

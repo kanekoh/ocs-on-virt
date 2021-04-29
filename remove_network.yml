@@ -1,0 +1,9 @@
+---
+- hosts: dev_server
+  become: true
+  tasks:
+  - name: Remove networks
+    import_role:
+      name: vms
+      tasks_from: destroy_networks
+

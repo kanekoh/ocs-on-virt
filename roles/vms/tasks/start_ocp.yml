@@ -1,0 +1,24 @@
+---
+- name: start bootstrap
+  with_inventory_hostnames: bootstrap
+  virt:
+    command: start
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    state: running
+    autostart: yes
+
+- name: start masters
+  with_inventory_hostnames: masters
+  virt:
+    command: start
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    state: running
+    autostart: yes
+
+- name: start workers
+  with_inventory_hostnames: workers
+  virt:
+    command: start
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    state: running
+    autostart: yes

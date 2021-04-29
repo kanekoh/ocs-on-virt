@@ -1,0 +1,8 @@
+---
+- hosts: dev_server
+  become: true
+  tasks:
+  - name: generate vars file
+    import_role:
+      name: vms
+      tasks_from: generate_vars

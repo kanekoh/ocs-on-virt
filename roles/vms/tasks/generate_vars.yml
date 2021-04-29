@@ -1,0 +1,37 @@
+---
+#- name: sample
+#  with_inventory_hostnames: masters
+#  set_fact:
+#    masters:
+#    - name: "{{ item }}"
+#      hoge: "{{ item }}"
+
+#- name: debug
+#  debug:
+#    msg: "{{ masters }}"
+#
+#- name: debug
+#  debug:
+#    msg: "{{ emaster02 }}"
+
+#- name: Copy vars.yaml
+#  template:
+#    src: vars.yaml.j2
+#    dest: /tmp/vars.yaml
+
+- name: shell
+  with_inventory_hostnames: bootstrap:masters:workers
+  script:
+    print_mac.sh -d {{ item }} -n {{ public_network_name }} -i eth0
+  register: mac
+
+- name: debug
+  with_items: "{{ mac.results }}"
+  debug:
+    var: item
+
+- name: Replaces
+  with_items: "{{ mac.results }}"
+  delegate_to: "{{ groups['helper'][0] }}"
+  shell: |
+    sed -i -s 's/{{ item.item }}_macaddr/{{ item.stdout_lines[0] }}/g' ~/ocp4-helpernode/vars.yaml

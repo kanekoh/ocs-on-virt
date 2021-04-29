@@ -2,19 +2,21 @@
 - name: stop public network
   community.libvirt.virt_net:
     command: stop
-    name: public
+    name: "{{ public_network_name }}"
+  ignore_errors: true
 
-- name: stop private network
-  community.libvirt.virt_net:
-    command: stop
-    name: private
+#- name: stop private network
+#  community.libvirt.virt_net:
+#    command: stop
+#    name: private
 
 - name: undefine public network
   community.libvirt.virt_net:
     command: undefine
-    name: public
+    name: "{{ public_network_name}}"
+  ignore_errors: true
 
-- name: undefine private network
-  community.libvirt.virt_net:
-    command: undefine
-    name: private
+#- name: undefine private network
+#  community.libvirt.virt_net:
+#    command: undefine
+#    name: private

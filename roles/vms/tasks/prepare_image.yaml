@@ -10,4 +10,4 @@
   args:
     chdir: "{{ virt_home }}/images/"
   become: yes
-  with_inventory_hostnames: all:!dev_server
+  with_inventory_hostnames: helper

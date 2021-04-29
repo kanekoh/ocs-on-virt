@@ -7,25 +7,31 @@
     state: directory
     owner: qemu
     group: qemu
-  with_inventory_hostnames: all:!dev_server
+  with_inventory_hostnames: helper
 
 - name: Create meta-data file
   template:
     src: meta-data.j2
     dest: "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}/meta-data"
-  with_inventory_hostnames: all:!dev_server
+  with_inventory_hostnames: helper
 
 - name: Create user-data file
   template:
     src: user-data.j2
     dest: "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}/user-data"
-  with_inventory_hostnames: all:!dev_server
+  with_inventory_hostnames: helper
+
+- name: Create network-config file
+  template:
+    src: network-config.j2
+    dest: "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}/network-config"
+  with_inventory_hostnames: helper
 
 - name: Create ISO file
   shell: |
     genisoimage -output "{{ hostvars[item].inventory_hostname_short }}.iso" \
-    -volid cidata -joliet -rock user-data meta-data
+    -volid cidata -joliet -rock user-data meta-data network-config
   args:
     chdir: "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}"
-  with_inventory_hostnames: all:!dev_server
+  with_inventory_hostnames: helper
 
