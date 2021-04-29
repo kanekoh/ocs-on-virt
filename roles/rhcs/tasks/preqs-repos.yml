@@ -1,0 +1,17 @@
+---
+- name: Debug
+  debug:
+    msg: "{{ rhel_version }}"
+
+- name: RHEL7 setup
+  import_role:
+    name: rhcs
+    tasks_from: preqs-rhel7-repos
+  when: rhel_version == 7
+
+
+- name: RHEL8 setup
+  import_role:
+    name: rhcs
+    tasks_from: preqs-rhel8-repos
+  when: rhel_version == 8

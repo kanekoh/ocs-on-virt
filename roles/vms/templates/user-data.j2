@@ -1,0 +1,27 @@
+#cloud-config
+password: "{{ lookup('password', '{{ virt_userdata_password }} chars=ascii_letters') }}"
+chpasswd: {expire: False}
+ssh_pwauth: True
+ssh_authorized_keys:
+  - "{{ lookup('file', '{{ virt_ssh_authorized_keys }}') }}"
+timezone: {{ virt_timezone }}
+
+# Add yum repository configuration to the system
+yum_repos:
+  rhel-8-for-x86_64-baseos-rpms:
+    name: Red Hat Enterprise Linux 8.0 BaseOS
+    baseurl: http://{{ public_cidr }}.1:8081/repos/rhel-8-for-x86_64-baseos-rpms
+    enabled: true
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  rhel-8-for-x86_64-appstream-rpms:
+    name: Red Hat Enterprise Linux 8.0 AppStream
+    baseurl: http://{{ public_cidr }}.1:8081/repos/rhel-8-for-x86_64-appstream-rpms
+    enabled: true
+    gpgcheck: true
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+bootcmd:
+  - sed -i 's/^Defaults \s\+requiretty/#\0/' /etc/sudoers
+  - sed -i -e "s/^#compress/compress/" /etc/logrotate.conf
+  - echo "sslverify=false" >> /etc/yum.conf

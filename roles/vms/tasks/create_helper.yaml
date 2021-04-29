@@ -1,0 +1,25 @@
+---
+- name: 
+- name: Creates helper
+  shell: |
+    virt-install \
+      --name {{ hostvars[item].inventory_hostname_short }}  \
+      --memory 4096 \
+      --vcpus 4 \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}.qcow2,bus=virtio,size=50 \
+      --disk path={{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}/{{ hostvars[item].inventory_hostname_short }}.iso,device=cdrom \
+      --import \
+      --os-variant rhel8.0 \
+      --noautoconsole \
+      --vnc \
+      --autostart \
+      --network network={{ public_network_name }} 
+  become: yes
+  with_inventory_hostnames: helper
+
+- name: Wait for IP address is assigned
+  pause:
+    seconds: 10
+  with_inventory_hostnames: helper
+
+

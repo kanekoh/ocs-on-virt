@@ -1,0 +1,8 @@
+---
+- hosts: dev_server
+  become: yes
+  tasks:
+  - name: create ceph servers
+    import_role:
+      name: vms
+      tasks_from: create_cloud_init

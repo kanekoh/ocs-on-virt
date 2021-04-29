@@ -1,0 +1,56 @@
+---
+- name: install packages
+  become: yes
+  yum:
+    state: latest
+    name: "{{ local_packages }}"
+
+- name: Grant 8081 for httpd
+  become: yes
+  shell: |
+    semanage port -a -t http_port_t -p tcp 8081
+    semanage port -m -t http_port_t -p tcp 8081
+  ignore_errors: yes
+
+
+- name: Start httpd
+  become: yes
+  systemd:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: Make Dir for reposync
+  become: yes
+  file:
+    path: "{{  repo_dir }}"
+    state: directory 
+    mode: '0755'
+
+- name: Copy reposync.sh script
+  become: yes
+  copy:
+    src: lookup('file', 'reposync.sh')
+    dest: /usr/bin/reposync.sh
+    mode: '755'
+
+- name: Add sync repos job to crontab
+  become: yes
+  cron:
+    name: Reposync "{{ item }}"
+    weekday: 0
+    hour: 0
+    minute: 0
+    job: "/usr/bin/reposync.sh"
+
+- name: Set SElinux policy
+  become: yes
+  shell: |
+    restorecon -irv {{ repo_dir }}
+    chcon -R -t httpd_sys_content_t {{ repo_dir }}
+
+- name: do not permit traffic in default zone on port 8081/tcp
+  ansible.posix.firewalld:
+    port: 8081/tcp
+    permanent: yes
+    state: enabled

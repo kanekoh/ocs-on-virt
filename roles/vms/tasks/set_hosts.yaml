@@ -1,0 +1,17 @@
+---
+- name: Get ip address of loadbalancer for multiple masters
+  shell: |
+    virsh domifaddr '{{ hostvars[item].inventory_hostname_short }}' --source agent | awk '/eth0/ { gsub(/\/.*/, ""); print $4; }'
+  become: yes
+  with_inventory_hostnames: all!dev_server
+  register: ip_addrs
+
+- name: Debug ip addresss
+  debug:
+    msg: "{{ item.stdout }} {{item.item}}"
+  with_items: "{{ ip_addrs.results }}"
+
+- name: "Build hosts file"
+  lineinfile: dest=/etc/hosts regexp='.*{{ item.item }}$' line="{{ item.stdout | ipaddr('address') }} {{item.item}}" state=present
+  with_items: "{{ ip_addrs.results }}"
+  become: yes

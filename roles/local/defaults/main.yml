@@ -1,0 +1,13 @@
+local_packages:
+  - haproxy
+  - httpd
+  - policycoreutils-python-utils
+
+httpd_port: 8081
+lb_port: 8080
+
+repos:
+  - rhel-8-for-x86_64-appstream-rpms
+  - rhel-8-for-x86_64-baseos-rpms
+
+repo_dir: /var/www/html/repos

@@ -1,0 +1,35 @@
+---
+#- hosts: proxy
+#  become: true
+#  tasks:
+#  - name: setup proxy
+#    import_role:
+#      name: proxy
+#      tasks_from: setup
+
+#  - name: install modules
+#    import_role:
+#      name: proxy
+#      tasks_from: install
+
+- hosts: all:!proxy
+  gather_facts: yes
+  become: true
+  tasks:
+
+#  - name: setup proxy
+#    import_role:
+#      name: rhcs
+#      tasks_from: proxy
+
+  - name: setup others
+    import_role:
+      name: rhcs
+      tasks_from: preqs-etc
+
+  - name: prerequisiets
+    import_role:
+      name: rhcs
+      tasks_from: preqs-repos
+
+

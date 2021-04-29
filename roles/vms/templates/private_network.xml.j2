@@ -1,0 +1,11 @@
+<network>
+  <name>{{ private_network_name }}</name>
+  <bridge name="{{ private_bridge_name}}"/>
+  <domain name="{{ private_domain}}" localOnly="yes" />
+  <forward mode="nat"/>
+  <ip address="{{ private_cidr }}.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="{{ private_cidr }}.2" end="{{ private_cidr }}.100"/>
+    </dhcp>
+  </ip>
+</network>

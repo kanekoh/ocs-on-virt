@@ -1,0 +1,56 @@
+- name: Add User
+  shell: adduser admin
+  ignore_errors: true
+
+- name: Set password
+  shell: echo admin | passwd admin --stdin
+
+- name: Allow 'admin' to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: 'admin ALL=(ALL) NOPASSWD: ALL'
+
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+#- name: "Build hosts file"
+#  lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+#  when: hostvars[item].ansible_default_ipv4.address is defined
+#  with_items: "{{ groups['all'] }}"
+
+#- name: Generate /etc/hosts file
+#  template:
+#    src: "{{ lookup('template', 'hosts.j2') }}"
+#    dest: /tmp/hosts-ansible
+
+#- name: Copy hosts
+#  copy:
+#    src: /etc/hosts
+#    dest: /etc/hosts
+#    backup: yes
+#  notify:
+#    - restart_dnsmasq
+#  when: inventory_hostname in groups['others']
+
+#- name: "Build ssh config file"
+#  ansible.builtin.template:
+#    src: ssh-config.j2
+#    dest: ~/.ssh/config
+#    backup: yes
+#  when: inventory_hostname in groups['ansible']
+
+#- name: copy private key
+#  copy:
+#    src: id_rsa
+#    dest: ~/.ssh/id_rsa
+#    mode: '0600'
+#  when: inventory_hostname in groups['others']
+
+#- name: Copy ssh-pub key
+#  ansible.posix.authorized_key:
+#    user: admin
+#    state: present
+#    key: "{{ lookup('file', 'id_rsa.pub') }}"

@@ -1,0 +1,41 @@
+---
+- name: Check VM exists
+  become: yes
+  register: vmexist
+  with_inventory_hostnames: cephs
+  shell: |
+    virsh domstats {{ hostvars[item].inventory_hostname_short }}
+  ignore_errors: true
+
+- name: Create Ceph servers
+  when: vmexist.results[0].rc != 0
+  become: yes
+  with_inventory_hostnames: cephs
+  shell: |
+    virt-install \
+      --name {{ hostvars[item].inventory_hostname_short }}  \
+      --memory 20480 \
+      --vcpus 4 \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}.qcow2 \
+      --disk path={{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}/{{ hostvars[item].inventory_hostname_short }}.iso,device=cdrom \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}_osd1.qcow2,device=disk,bus=virtio,format={{ virt_disk_format }},size={{ virt_osd_disk_size }} \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}_osd2.qcow2,device=disk,bus=virtio,format={{ virt_disk_format }},size={{ virt_osd_disk_size }} \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}_osd3.qcow2,device=disk,bus=virtio,format={{ virt_disk_format }},size={{ virt_osd_disk_size }} \
+      --import \
+      --os-variant rhel8.0 \
+      --noautoconsole \
+      --vnc \
+      --autostart \
+      --network network={{ public_network_name }}
+
+- name: Wait for IP address is assigned
+  when: vmexist.results[0].rc != 0
+  with_inventory_hostnames: cephs
+  pause:
+    seconds: 10
+
+- name: Show vm info
+  with_inventory_hostnames: cephs
+  virt:
+    command: info
+    name: "{{ hostvars[item].inventory_hostname_short }}"

@@ -1,0 +1,24 @@
+---
+- name: set resolv.conf
+  lineinfile:
+    dest: /etc/resolv.conf
+    line: nameserver {{ proxy_server }}
+    state: present
+
+- name: Proxy settings
+  block:
+  - name: replace /etc/rhsm.conf 
+    ansible.builtin.replace:
+      path: "{{ rhsm_conf }}"
+      regexp: '^(proxy_hostname =)(.*)$'
+      replace: '\1 {{ proxy_server }}'
+      backup: true
+
+  - name: replace /etc/rhsm.conf
+    ansible.builtin.replace:
+      path: "{{ rhsm_conf }}"
+      regexp: '^(proxy_port =)(.*)$'
+      replace: '\1 3128'
+      backup: true
+  when: 
+    - proxy_environment 

@@ -1,0 +1,40 @@
+all:
+  children:
+    proxy:
+      hosts:
+        proxy:
+    mon:
+      hosts:
+        ceph_1:
+        ceph_2:
+        ceph_3:
+    osd:
+      hosts:
+        ceph_1:
+        ceph_2:
+        ceph_3:
+    ansible:
+      hosts:
+        other:
+    others:
+      hosts:
+        other:
+    lbs:
+      hosts:
+        lb_server_1:
+        lb_server_2:
+  vars:
+    ansible_user: root
+    ansible_ssh_pass: redhat
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+
+    rhsm_username: 
+    rhsm_password: 
+    rhsm_poolid: 
+
+
+    proxy_environment: true
+    rhel_version: 8
+
+    proxy_server: 172.168.1.33

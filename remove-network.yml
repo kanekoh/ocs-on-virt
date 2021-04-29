@@ -1,0 +1,9 @@
+---
+- hosts: dev_server
+  tasks:
+
+  - name: Destroy networks
+    import_role:
+      name: vms
+      tasks_from: destroy_networks
+    ignore_errors: yes

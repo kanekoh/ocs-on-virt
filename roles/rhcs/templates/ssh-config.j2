@@ -1,0 +1,8 @@
+#jinja2:lstrip_blocks: True
+
+{% for item in groups['all'] %}
+Host {{ item }}
+   Hostname {{ hostvars[item]['inventory_hostname'] }}
+   User admin
+
+{% endfor %}

@@ -1,0 +1,37 @@
+proxy_environment: false
+
+repos_r7_common:
+  - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
+
+repos_r7_ansible:
+  - rhel-7-server-ansible-2.9-rpms
+  - rhel-7-server-rhceph-4-tools-rpms
+
+repos_r7_mon:
+  - rhel-7-server-rhceph-4-mon-rpms
+
+repos_r7_osd:
+  - rhel-7-server-rhceph-4-osd-rpms
+
+# RBD mirroring, Ceph clients, Ceph Object Gateways, Metadata Servers, NFS, iSCSI gateways, and Dashboard servers.
+repos_r7_others:
+  - rhel-7-server-rhceph-4-tools-rpms
+
+repos_r8_common:
+  - rhel-8-for-x86_64-baseos-rpms
+  - rhel-8-for-x86_64-appstream-rpms
+
+repos_r8_ansible:
+  - rhceph-4-tools-for-rhel-8-x86_64-rpms
+  - ansible-2.9-for-rhel-8-x86_64-rpms
+
+repos_r8_mon:
+  - rhceph-4-mon-for-rhel-8-x86_64-rpms
+
+repos_r8_osd:
+  - rhceph-4-osd-for-rhel-8-x86_64-rpms
+
+# RBD mirroring, Ceph clients, Ceph Object Gateways, Metadata Servers, NFS, iSCSI gateways, and Dashboard servers.
+repos_r8_others:
+  - rhceph-4-tools-for-rhel-8-x86_64-rpms

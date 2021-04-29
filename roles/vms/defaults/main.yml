@@ -1,0 +1,24 @@
+public_network_name: openshift4
+public_domain: openshift4
+public_bridge_name: ocp-virbr10
+public_cidr: 192.168.7
+
+private_network_name: ocp_private
+private_domain: private.ocp.local
+private_bridge_name: ocp-virbr2
+private_cidr: 192.168.11
+
+virt_home: /var/lib/libvirt
+virt_dir_images: "{{ virt_home }}/images"
+#base_image: rhel-guest-image-7.0-20140930.0.x86_64.qcow2
+base_image: rhel-server-7.9-x86_64-kvm.qcow2
+virt_disk_format: qcow2
+virt_osd_disk_size: 20
+
+virt_userdata_password: redhat
+virt_timezone: UTC
+
+helper_ip: 77
+upstream_dns
+- 10.72.17.5
+- 10.68.5.26

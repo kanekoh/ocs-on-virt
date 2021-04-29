@@ -1,0 +1,13 @@
+all:
+  hosts:
+  children:
+    dev_server:
+      hosts:
+        localhost
+    helper:
+      hosts:
+        helper:
+  vars:
+    ansible_connection: local
+
+    base_image: rhel-8.3-x86_64-kvm.qcow2

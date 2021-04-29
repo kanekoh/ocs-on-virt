@@ -1,0 +1,17 @@
+---
+- name: Creates Proxy
+  shell: |
+    virt-install \
+      --name {{ hostvars[item].inventory_hostname_short }}  \
+      --memory 1024 \
+      --vcpus 4 \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}.qcow2 \
+      --import \
+      --os-variant rhel8 \
+      --noautoconsole \
+      --vnc \
+      --autostart \
+      --network network=ocp-public \
+      --network network=ocp-private
+  become: yes
+  with_inventory_hostnames: proxy

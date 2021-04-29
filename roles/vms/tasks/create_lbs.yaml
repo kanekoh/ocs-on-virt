@@ -1,0 +1,38 @@
+---
+- name: Create Haproxy servers
+  shell: |
+    virt-install \
+      --name {{ hostvars[item].inventory_hostname_short }}  \
+      --memory 1536 \
+      --vcpus 2 \
+      --disk {{ virt_home }}/images/{{ hostvars[item].inventory_hostname_short }}.qcow2 \
+      --import \
+      --os-variant rhel7 \
+      --noautoconsole \
+      --vnc \
+      --autostart \
+      --network network=private
+  become: yes
+  with_inventory_hostnames: lbs
+
+- name: Wait for IP address is assigned
+  pause:
+    seconds: 10
+  with_inventory_hostnames: lbs
+
+#- name: Get ip address of loadbalancer for multiple masters
+#  shell: |
+#    virsh domifaddr '{{ hostvars[item].inventory_hostname_short }}' --source agent | awk '/eth0/ { gsub(/\/.*/, ""); print $4; }'
+#  become: yes
+#  with_items: "{{ groups.lbs }}"
+#  register: ip_addrs
+#
+#- name: Debug ip addresss
+#  debug:
+#    msg: "{{ item.stdout }} {{item.item}}"
+#  with_items: "{{ ip_addrs.results }}"
+#
+#- name: "Build hosts file"
+#  lineinfile: dest=/etc/hosts regexp='.*{{ item.item }}$' line="{{ item.stdout | ipaddr('address') }} {{item.item}}" state=present
+#  with_items: "{{ ip_addrs.results }}"
+#  become: yes

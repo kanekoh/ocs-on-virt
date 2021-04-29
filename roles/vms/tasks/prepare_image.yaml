@@ -1,0 +1,13 @@
+---
+#- name: cutomize qcow2 image
+#  shell:
+#    virt-customize -a {{ virt_home }}/images/{{ base_image }} --root-password password:redhat 
+#  become: true
+
+- name: Create VM images
+  shell: |
+    qemu-img create -f qcow2 -o backing_file={{ base_image }} {{ hostvars[item].inventory_hostname_short }}.qcow2
+  args:
+    chdir: "{{ virt_home }}/images/"
+  become: yes
+  with_inventory_hostnames: all:!dev_server

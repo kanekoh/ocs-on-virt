@@ -1,0 +1,17 @@
+---
+- hosts: dev_server
+  tasks:
+  - name: Create networks
+    import_role:
+      name: vms
+      tasks_from: create_networks
+
+  - name: Prepare image
+    import_role:
+      name: vms
+      tasks_from: prepare_image
+
+  - name: Create repos
+    import_role:
+      name: local
+      tasks_from: main

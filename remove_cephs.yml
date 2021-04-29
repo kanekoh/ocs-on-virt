@@ -1,0 +1,9 @@
+---
+- hosts: dev_server
+  tasks:
+  - name: Destroy VMs
+    import_role:
+      name: vms
+      tasks_from: destroy_ceph
+    ignore_errors: yes
+

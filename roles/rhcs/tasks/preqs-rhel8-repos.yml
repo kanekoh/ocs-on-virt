@@ -1,0 +1,111 @@
+---
+# Setup repository for RHEL 8
+#- name: resigtr rhms
+#  redhat_subscription: 
+#    state: present
+#    username: "{{ rhsm_username }}"
+#    password: "{{ rhsm_password }}"
+#    pool_ids: 
+#      - "{{ rhsm_8_poolid }}"
+
+#- name: disabled repos
+#  community.general.rhsm_repository:
+#    name: '*'
+#    state: disabled
+
+#- name: enabled common repos
+#  community.general.rhsm_repository:
+#    name: "{{ item }}"
+#    state: enabled
+#  with_items: "{{ repos_r8_common }}"
+#  when: inventory_hostname in groups['all']
+
+- name: enabled ansible repos
+  yum_repository:
+    name: ansible-2.9-for-rhel-8-x86_64-rpms
+    description: ansible yum repo
+    baseurl: http://{{ public_cidr }}.1:8081/repos/ansible-2.9-for-rhel-8-x86_64-rpms
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  when: inventory_hostname in groups['ansible']
+
+- name: enabled mon repos
+  yum_repository:
+    name: rhceph-4-mon-for-rhel-8-x86_64-rpms
+    description: ansible yum repo
+    baseurl: http://{{ public_cidr }}.1:8081/repos/rhceph-4-mon-for-rhel-8-x86_64-rpms
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  when: inventory_hostname in groups['mon']
+
+- name: enabled osd repos
+  yum_repository:
+    name: rhceph-4-osd-for-rhel-8-x86_64-rpms
+    description: ansible yum repo
+    baseurl: http://{{ public_cidr }}.1:8081/repos/rhceph-4-osd-for-rhel-8-x86_64-rpms
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  when: inventory_hostname in groups['osd']
+
+- name: enabled others repos
+  yum_repository:
+    name: rhceph-4-tools-for-rhel-8-x86_64-rpms
+    description: ansible yum repo
+    baseurl: http://{{ public_cidr }}.1:8081/repos/rhceph-4-tools-for-rhel-8-x86_64-rpms
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  when: inventory_hostname in groups['others']
+
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - firewalld
+
+
+- name: enable firewalld
+  service:
+    name: firewalld
+    enabled: true
+    state: started
+
+- name: setup firewalld
+  ansible.posix.firewalld:
+    port: 6789/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+
+- name: setup firewalld
+  ansible.posix.firewalld:
+    port: 6800-7300/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+
+- name: setup firewalld
+  ansible.posix.firewalld:
+    port: 8080/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+
+- name: setup firewalld
+  ansible.posix.firewalld:
+    port: 80/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+
+- name: setup firewalld
+  ansible.posix.firewalld:
+    port: 443/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+

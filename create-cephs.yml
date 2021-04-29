@@ -1,0 +1,7 @@
+---
+- hosts: dev_server
+  tasks:
+  - name: create ceph servers
+    import_role:
+      name: vms
+      tasks_from: create_ceph

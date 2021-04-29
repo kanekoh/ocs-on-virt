@@ -1,0 +1,26 @@
+---
+- hosts: cephs
+  gather_facts: yes
+  become: true
+  tasks:
+  - name: prerequisiets
+    import_role:
+      name: rhcs
+      tasks_from: prerequisites
+
+- hosts: other
+  become: true
+  tasks:
+  - name: prereq 2
+    import_role:
+      name: rhcs
+      tasks_from: prerequisites-others
+
+- hosts: all
+  become: true
+  tasks:
+  - name: prereq 3
+    import_role:
+      name: rhcs
+      tasks_from: prereq
+

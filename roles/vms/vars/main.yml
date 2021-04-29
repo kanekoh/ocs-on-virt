@@ -1,0 +1,8 @@
+vms:
+  cephs:
+    ceph01:
+      mac: "52:54:00:ef:1c:00"
+    ceph02:
+      mac: "52:54:00:ef:1c:01"
+    ceph03:
+      mac: "52:54:00:ef:1c:02"

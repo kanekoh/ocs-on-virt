@@ -1,0 +1,20 @@
+---
+- name: stop public network
+  community.libvirt.virt_net:
+    command: stop
+    name: public
+
+- name: stop private network
+  community.libvirt.virt_net:
+    command: stop
+    name: private
+
+- name: undefine public network
+  community.libvirt.virt_net:
+    command: undefine
+    name: public
+
+- name: undefine private network
+  community.libvirt.virt_net:
+    command: undefine
+    name: private
