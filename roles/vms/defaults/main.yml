@@ -1,24 +1,53 @@
 public_network_name: openshift4
 public_domain: openshift4
-public_bridge_name: ocp-virbr10
+public_bridge_name: ocp-virbr1
 public_cidr: 192.168.7
 
-private_network_name: ocp_private
-private_domain: private.ocp.local
-private_bridge_name: ocp-virbr2
-private_cidr: 192.168.11
+#private_network_name: ocp_private
+#private_domain: private.ocp.local
+#private_bridge_name: ocp-virbr2
+#private_cidr: 192.168.11
 
 virt_home: /var/lib/libvirt
 virt_dir_images: "{{ virt_home }}/images"
 #base_image: rhel-guest-image-7.0-20140930.0.x86_64.qcow2
 base_image: rhel-server-7.9-x86_64-kvm.qcow2
 virt_disk_format: qcow2
-virt_osd_disk_size: 20
+virt_osd_disk_size: 1024
 
 virt_userdata_password: redhat
 virt_timezone: UTC
 
 helper_ip: 77
-upstream_dns
+#helper_mac: "52:54:00:ef:1c:00"
+
+bootstrap_ip: 9
+masters:
+- ip: 10
+- ip: 11
+- ip: 12
+
+workers:
+- ip: 20
+- ip: 21
+- ip: 22
+- ip: 23
+- ip: 24
+
+storages:
+- ip: 30
+- ip: 31
+- ip: 32
+
+upstream_dns:
 - 10.72.17.5
 - 10.68.5.26
+
+rhel8_repos:
+  - rhel-8-for-x86_64-appstream-rpms
+  - rhel-8-for-x86_64-baseos-rpms 
+  - ansible-2.9-for-rhel-8-x86_64-rpms
+
+helper_packages:
+  - ansible
+  - git

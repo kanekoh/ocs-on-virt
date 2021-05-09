@@ -1,0 +1,36 @@
+---
+disk: vda
+helper:
+  name: "helper"
+  ipaddr: "{{ public_cidr }}.{{ helper_ip }}"
+dns:
+  domain: "example.com"
+  clusterid: "ocp4"
+  forwarder1: "{{ upstream_dns[0] }}"
+  forwarder2: "{{ upstream_dns[1] }}"
+dhcp:
+  router: "{{ public_cidr }}.1"
+  bcast: "{{ public_cidr }}.255"
+  netmask: "255.255.255.0"
+  poolstart: "{{ public_cidr }}.10"
+  poolend: "{{ public_cidr }}.30"
+  ipid: "{{ public_cidr }}.0"
+  netmaskid: "255.255.255.0"
+bootstrap:
+{% for bootstrap in groups['bootstrap'] %}
+  name: "bootstrap"
+  ipaddr: "{{ public_cidr }}.{{ bootstrap_ip }}"
+  macaddr: "{{ bootstrap }}_macaddr"
+{% endfor %}
+masters:
+{% for master in groups['masters'] %}
+  - name: "master{{ loop.index0 }}"
+    ipaddr: "{{ public_cidr }}.{{ masters[loop.index0].ip }}"
+    macaddr: {{ master }}_macaddr
+{% endfor %}
+workers:
+{% for worker in groups['workers'] %}
+  - name: "worker{{ loop.index0 }}"
+    ipaddr: "{{ public_cidr }}.{{ workers[loop.index0].ip }}"
+    macaddr: {{ worker }}_macaddr
+{% endfor %}

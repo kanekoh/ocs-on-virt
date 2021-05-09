@@ -1,0 +1,14 @@
+---
+- hosts: dev_server
+  become: true 
+  tasks:
+  - import_role:
+      name: vms
+      tasks_from: generate_vars
+
+- hosts: helper
+  become: true
+  tasks:
+  - import_role:
+      name: vms
+      tasks_from: post_setup_helper

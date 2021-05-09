@@ -7,6 +7,7 @@ ssh_authorized_keys:
 timezone: {{ virt_timezone }}
 
 # Add yum repository configuration to the system
+<<<<<<< HEAD
 yum_repos:
   rhel-8-for-x86_64-baseos-rpms:
     name: Red Hat Enterprise Linux 8.0 BaseOS
@@ -20,6 +21,22 @@ yum_repos:
     enabled: true
     gpgcheck: true
     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+=======
+#yum_repos:
+#  rhel-8-for-x86_64-baseos-rpms:
+#    name: Red Hat Enterprise Linux 8.0 BaseOS
+#    baseurl: http://{{ public_cidr }}.1:8081/repos/rhel-8-for-x86_64-baseos-rpms
+#    enabled: true
+#    gpgcheck: true
+#    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+#  rhel-8-for-x86_64-appstream-rpms:
+#    name: Red Hat Enterprise Linux 8.0 AppStream
+#    baseurl: http://{{ public_cidr }}.1:8081/repos/rhel-8-for-x86_64-appstream-rpms
+#    enabled: true
+#    gpgcheck: true
+#    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+>>>>>>> 13cb7cd... Verify deploying ocp cluster
 
 bootcmd:
   - sed -i 's/^Defaults \s\+requiretty/#\0/' /etc/sudoers

@@ -1,0 +1,18 @@
+---
+- hosts: dev_server
+  become: true
+  tasks:
+  - name: Create bootstrap
+    import_role:
+      name: vms
+      tasks_from: create_ocp_bootstrap
+
+  - name: Create masters
+    import_role:
+      name: vms
+      tasks_from: create_ocp_masters
+
+  - name: Create workers
+    import_role:
+      name: vms
+      tasks_from: create_ocp_workers

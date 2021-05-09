@@ -1,0 +1,11 @@
+# This section needs to go into the /etc/network/interfaces on the
+# host machine. This section replaces what you would have had for eno1
+# or whatever your primary physical ethernet device is named.
+
+auto br0
+iface br0 inet static
+  address {{ public_cidr }}.{{ helper_ip }}/24
+  gateway {{ public_cidr }}.1
+  dns-nameservers {{ upstream_dns[0] }} {{ upstream_dns[1] }}
+  bridge_ports eth0
+  bridge_maxwait 0

@@ -1,0 +1,46 @@
+---
+- name: Stop VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: destroy
+  become: true
+  with_inventory_hostnames: helper
+
+- name: Undefine VMs
+  ignore_errors: true
+  community.libvirt.virt:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    command: undefine
+  become: true
+  with_inventory_hostnames: helper
+
+- name: Remove Disk
+  with_inventory_hostnames: helper
+  shell: |
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} {{ hostvars[item].inventory_hostname_short }}.iso
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} user-data
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} meta-data
+    virsh vol-delete --pool {{ hostvars[item].inventory_hostname_short }} network-config
+  ignore_errors: true
+
+- name: Remove Pool
+  with_inventory_hostnames: helper
+  virt_pool:
+    command: destroy
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+  ignore_errors: true
+
+- name: Add helper to hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ item }}$'
+    line: "{{ public_cidr }}.{{ helper_ip }} {{ item }}"
+    state: absent
+  with_items: '{{ groups["helper"] }}'
+
+- name: Remove qcow2
+  with_inventory_hostnames: helper
+  shell: |
+    rm -f "{{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}.qcow2"
+  ignore_errors: true

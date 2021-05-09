@@ -1,5 +1,6 @@
 <network>
   <name>{{ public_network_name }}</name>
+<<<<<<< HEAD
   <bridge name="{{ public_bridge_name}}" />
   <forward mode="nat"/>
   <domain name="{{ public_domain }}" />
@@ -7,5 +8,11 @@
     <dhcp>
       <range start="{{ public_cidr }}.2" end="{{ public_cidr }}.100"/>
     </dhcp>
+=======
+  <bridge name="{{ public_bridge_name}}" stp="on" delay="0" />
+  <forward mode="nat"/>
+  <domain name="{{ public_domain }}" />
+  <ip address="{{ public_cidr }}.1" netmask="255.255.255.0">
+>>>>>>> 13cb7cd... Verify deploying ocp cluster
   </ip>
 </network>

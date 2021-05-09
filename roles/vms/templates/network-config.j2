@@ -1,0 +1,9 @@
+version: 2
+ethernets:
+  eth0:
+    addresses:
+      - {{ public_cidr }}.{{ helper_ip }}/24
+    gateway4: {{ public_cidr }}.1
+    nameservers:
+      addresses:
+        - {{ public_cidr }}.1

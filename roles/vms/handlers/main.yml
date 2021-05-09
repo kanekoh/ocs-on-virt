@@ -1,0 +1,5 @@
+- name: remove tempdir
+  ansible.builtin.file:
+    path: "{{ tempdir.path }}"
+    state: absent
+  when: tempdir.path is defined

@@ -1,6 +1,28 @@
 ---
-- name: 
+#- name: Add helper ip
+#  with_inventory_hostnames: helper
+#  community.libvirt.virt_net:
+#    name: "{{ public_network_name }}"
+#    command: modify
+#    xml: "<host mac='{{ helper_mac }}' name='{{ hostvars[item].inventory_hostname_short}}' ip='{{ public_cidr}}.{{ helper_ip }}'/>"
+
+- name: Another way to call known_hosts
+  with_inventory_hostnames: helper
+  known_hosts:
+    name: "{{ hostvars[item].inventory_hostname_short }}"
+    path: ~/.ssh/known_hosts
+    state: absent
+
+- name: Check VM exists
+  become: yes
+  register: vmexist
+  with_inventory_hostnames: helper
+  shell: |
+    virsh domstats {{ hostvars[item].inventory_hostname_short }}
+  ignore_errors: true
+
 - name: Creates helper
+  when: vmexist.results[0].rc != 0
   shell: |
     virt-install \
       --name {{ hostvars[item].inventory_hostname_short }}  \
@@ -13,13 +35,20 @@
       --noautoconsole \
       --vnc \
       --autostart \
-      --network network={{ public_network_name }} 
+      --network network={{ public_network_name }},mac={{ helper_mac }}
   become: yes
   with_inventory_hostnames: helper
 
 - name: Wait for IP address is assigned
+  when: vmexist.results[0].rc != 0
   pause:
     seconds: 10
   with_inventory_hostnames: helper
 
-
+- name: Add helper to hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ item }}$'
+    line: "{{ public_cidr }}.{{ helper_ip }} {{ item }}"
+    state: present
+  with_items: '{{ groups["helper"] }}'

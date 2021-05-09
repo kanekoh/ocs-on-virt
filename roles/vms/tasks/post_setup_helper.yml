@@ -1,0 +1,15 @@
+---
+- name: Execute playbook
+  shell: |
+    cd ~/ocp4-helpernode/
+    ansible-playbook -e @vars.yaml tasks/main.yml
+
+- name: Generate ignition file
+  become: false
+  shell: |
+    openshift-install create manifests
+    sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' manifests/cluster-scheduler-02-config.yml
+    openshift-install create ignition-configs
+    sudo cp ~/*.ign /var/www/html/ignition/
+    sudo restorecon -vR /var/www/html/
+    sudo chmod o+r /var/www/html/ignition/*.ign

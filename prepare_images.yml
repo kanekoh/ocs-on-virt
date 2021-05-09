@@ -1,13 +1,13 @@
 ---
 - hosts: dev_server
+  become: yes
   tasks:
-  - name: Create networks
-    import_role:
-      name: vms
-      tasks_from: create_networks
-
   - name: Prepare image
     import_role:
       name: vms
       tasks_from: prepare_image
 
+  - name: Create cloud-init 
+    import_role:
+      name: vms
+      tasks_from: create_cloud_init

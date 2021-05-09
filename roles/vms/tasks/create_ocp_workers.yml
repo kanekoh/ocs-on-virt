@@ -1,0 +1,46 @@
+---
+- name: Check VM exists
+  register: vmexist
+  with_inventory_hostnames: workers
+  shell: |
+    virsh domstats {{ hostvars[item].inventory_hostname_short }}
+  ignore_errors: true
+
+- name: Create temp dir
+  tempfile:
+    state: directory
+    suffix: ocp
+  register: tempdir
+  notify: remove tempdir
+
+- name: Generate xml for workers
+  when: vmexist.results[0].rc != 0
+  with_inventory_hostnames: workers
+  shell: |
+    virt-install \
+      --name {{ hostvars[item].inventory_hostname_short }} \
+      --vcpu 4 \
+      --ram 16384 \
+      --disk path={{ virt_dir_images }}/{{ hostvars[item].inventory_hostname_short }}.qcow2,bus=virtio,size=120 \
+      --os-variant rhel8.0 \
+      --network network={{ public_network_name }},model=virtio \
+      --graphics vnc,listen=0.0.0.0 \
+      --noautoconsole \
+      --boot hd,network,menu=on \
+      --print-xml > {{ tempdir.path }}/{{ hostvars[item].inventory_hostname_short}}.xml
+  register: VIRT_XML
+
+
+- name: Define Workers
+  when: vmexist.results[0].rc != 0
+  with_inventory_hostnames: workers
+  shell: |
+    virsh define --file {{ tempdir.path }}/{{ hostvars[item].inventory_hostname_short}}.xml
+    
+#- name: Update network
+#  when: vmexist.results[0].rc != 0
+#  with_inventory_hostnames: workers
+#  loop_control:
+#    extended: yes
+#  script: |
+#    virsh_net.sh -m add -n '{{ public_network_name }}' -d '{{ hostvars[item].inventory_hostname_short }}' -i '{{ public_cidr }}.{{ workers[ansible_loop.index0].ip }}'

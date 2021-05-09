@@ -1,0 +1,18 @@
+---
+- hosts: dev_server
+  become: true
+  tasks:
+  - name: Remove bootstrap
+    import_role:
+      name: vms
+      tasks_from: destroy_bootstrap
+
+  - name: Remove masters
+    import_role:
+      name: vms
+      tasks_from: destroy_masters
+
+  - name: Remove workers
+    import_role:
+      name: vms
+      tasks_from: destroy_workers
